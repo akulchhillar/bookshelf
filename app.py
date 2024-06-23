@@ -116,7 +116,7 @@ with tab1:
             books = []
             for book in st.session_state['book_data']:
                 try:
-                    books.append(f'{book['title']} by {book['author_name'][0]} , {book['cover_edition_key']} - {book['number_of_pages_median']}')
+                    books.append(f"{book['title']} by {book['author_name'][0]} , {book['cover_edition_key']} - {book['number_of_pages_median']}")
                 except:
                     pass
             query_books = st.radio('Select a book to add',
