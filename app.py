@@ -89,6 +89,7 @@ def MarkRead():
     if response.status_code == 204:
         st.success('Marked as Read!',icon="🎈")
 
+st.set_page_config(page_title="Bookshelf",page_icon="📔")
 
 if 'querybooks' in st.session_state:
     img_id = st.session_state.querybooks.split(',')[1].strip().split('-')[0].strip()
