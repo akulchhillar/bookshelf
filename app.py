@@ -58,7 +58,7 @@ def UpdateCurrentReading():
         'total_pages': int(st.session_state.totalpages)
     }
 
-    st.write(json_data)
+   
 
     
 
