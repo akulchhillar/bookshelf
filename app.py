@@ -54,9 +54,11 @@ def UpdateCurrentReading():
     'status': 'eq.Reading'}
 
     json_data = {
-        'pages_completed': (int(st.session_state.updateddata[0])),
-        'total_pages': int(st.session_state.updateddata[1])
+        'pages_completed': (int(st.session_state.readpages)),
+        'total_pages': int(st.session_state.totalpages)
     }
+
+    st.write(json_data)
 
     
 
@@ -135,7 +137,7 @@ with tab2:
             st.markdown(f"### You are currently reading ***{data['book_name']}*** by ***{data['Author']}***")
             st.number_input('You have read',value = data['pages_completed'],key="readpages")
             st.number_input('Total Pages',value = data['total_pages'],key="totalpages")
-            st.session_state.updateddata = [st.session_state.readpages,st.session_state.totalpages]
+            
             col1,col2 = st.columns([1,1])
             with col1:
 
