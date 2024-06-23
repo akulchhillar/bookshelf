@@ -132,7 +132,7 @@ with tab2:
 
         with st.form("search_form"):
         
-            st.markdown(f'### You are currently reading ***{data['book_name']}*** by ***{data['Author']}***')
+            st.markdown(f"### You are currently reading ***{data['book_name']}*** by ***{data['Author']}***")
             st.number_input('You have read',value = data['pages_completed'],key="readpages")
             st.number_input('Total Pages',value = data['total_pages'],key="totalpages")
             st.session_state.updateddata = [st.session_state.readpages,st.session_state.totalpages]
