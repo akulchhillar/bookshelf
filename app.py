@@ -65,6 +65,29 @@ def UpdateCurrentReading():
     if response.status_code == 204:
         st.success('Updated!',icon="🎈")
 
+def MarkRead():
+    key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdm5maHdsZmNya3Bkd2d2a2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODczNTY5OTcsImV4cCI6MjAwMjkzMjk5N30.hPS22Wlb6jhg3zRCDWfMBz3fW2bLXAvvyjxH0TPyajY"
+    headers = {
+    'apikey': key,
+    'Authorization': f'Bearer {key}',
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'}
+
+    params = {
+    'status': 'eq.Reading'}
+
+    json_data = {
+        'status': 'Read',
+    }
+
+    
+
+    response = requests.patch('https://esvnfhwlfcrkpdwgvklt.supabase.co/rest/v1/books', params=params, headers=headers, json=json_data,verify=False)
+ 
+    if response.status_code == 204:
+        st.success('Marked as Read!',icon="🎈")
+
+
 if 'querybooks' in st.session_state:
     img_id = st.session_state.querybooks.split(',')[1].strip().split('-')[0].strip()
     title = st.session_state.querybooks.split('by')[0].strip()
@@ -102,16 +125,29 @@ with tab1:
 
         
 with tab2:
-    data = GetLatestReading()[0]
 
-
-    with st.form("search_form"):
+    try:
         
-        st.markdown(f'### You are currently reading ***{data['book_name']}*** by ***{data['Author']}***')
-        st.number_input('You have read',value = data['pages_completed'],key="readpages")
-        st.number_input('Total Pages',value = data['total_pages'],key="totalpages")
-        st.session_state.updateddata = [st.session_state.readpages,st.session_state.totalpages]
-        submitted = st.form_submit_button("Submit",on_click=UpdateCurrentReading)
+        data = GetLatestReading()[0]
+
+        with st.form("search_form"):
+        
+            st.markdown(f'### You are currently reading ***{data['book_name']}*** by ***{data['Author']}***')
+            st.number_input('You have read',value = data['pages_completed'],key="readpages")
+            st.number_input('Total Pages',value = data['total_pages'],key="totalpages")
+            st.session_state.updateddata = [st.session_state.readpages,st.session_state.totalpages]
+            col1,col2 = st.columns([1,1])
+            with col1:
+
+                read = st.form_submit_button('Mark as Read',type='primary',on_click=MarkRead)
+            with col2:
+
+                submitted = st.form_submit_button("Submit",on_click=UpdateCurrentReading)
+    except:
+        st.write("There is no book that you are currently reading.")
+        pass
+        
+    
 
 
 
