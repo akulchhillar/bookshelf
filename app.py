@@ -1,10 +1,6 @@
 import streamlit as st
 import requests
 
-
-    
-
-
 def query_book(name):
     url = f"https://openlibrary.org/search.json?q={name}"
     req = requests.get(url,verify=False)
@@ -55,13 +51,10 @@ def UpdateCurrentReading():
 
     json_data = {
         'pages_completed': (int(st.session_state.readpages)),
-        'total_pages': int(st.session_state.totalpages)
+        'total_pages': int(st.session_state.totalpages),
+        'book_name': st.session_state.bookname,
+        'Author': st.session_state.author
     }
-
-   
-
-    
-
     response = requests.patch('https://esvnfhwlfcrkpdwgvklt.supabase.co/rest/v1/books', params=params, headers=headers, json=json_data,verify=False)
  
     if response.status_code == 204:
@@ -136,6 +129,8 @@ with tab2:
         with st.form("search_form"):
         
             st.markdown(f"### You are currently reading ***{data['book_name']}*** by ***{data['Author']}***")
+            st.text_input('Name of the book',value = data['book_name'],key="bookname")
+            st.text_input('Author',value = data['Author'],key="author")
             st.number_input('You have read',value = data['pages_completed'],key="readpages")
             st.number_input('Total Pages',value = data['total_pages'],key="totalpages")
             
