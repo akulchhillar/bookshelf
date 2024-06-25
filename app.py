@@ -136,11 +136,11 @@ with tab2:
             
             col1,col2 = st.columns([1,1])
             with col1:
-
-                read = st.form_submit_button('Mark as Read',type='primary',on_click=MarkRead)
+                submitted = st.form_submit_button("Submit",on_click=UpdateCurrentReading,type='primary')                
             with col2:
+                read = st.form_submit_button('Mark as Read',on_click=MarkRead)
 
-                submitted = st.form_submit_button("Submit",on_click=UpdateCurrentReading)
+                
     except:
         st.write("There is no book that you are currently reading.")
         pass
