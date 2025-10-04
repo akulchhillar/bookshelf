@@ -5,10 +5,11 @@ def query_book(name):
     url = f"https://openlibrary.org/search.json?q={name}"
     req = requests.get(url,verify=False)
     res = req.json()
+    
     st.session_state['book_data'] = res['docs']
 
 def AddToSupabase():
-    key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdm5maHdsZmNya3Bkd2d2a2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODczNTY5OTcsImV4cCI6MjAwMjkzMjk5N30.hPS22Wlb6jhg3zRCDWfMBz3fW2bLXAvvyjxH0TPyajY"
+    key = "sb_publishable_pmWX5FiLCQjop9LrBk5hhw_CZCKbsah"
     headers = {
     'apikey': key,
     'Authorization': f'Bearer {key}',
@@ -17,51 +18,32 @@ def AddToSupabase():
 }
 
     json_data = {
-        'book_name': st.session_state.selectedbook[0],
-        'book_img': st.session_state.selectedbook[2],
+        'name': st.session_state.selectedbook[0],
+        'img': st.session_state.selectedbook[2],
         'status': 'Reading',
-        'Author': st.session_state.selectedbook[1],
-        'total_pages': st.session_state.selectedbook[3]
+        'author': st.session_state.selectedbook[1],
+        
     }
 
-    response = requests.post('https://esvnfhwlfcrkpdwgvklt.supabase.co/rest/v1/books', headers=headers, json=json_data,verify=False)
+    response = requests.post('https://qtydevnghftbunqvpyyo.supabase.co/rest/v1/books_read', headers=headers, json=json_data,verify=False)
     if response.status_code == 201:
         st.success('Book Added',icon='🎈')
     
 def GetLatestReading():
-    key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdm5maHdsZmNya3Bkd2d2a2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODczNTY5OTcsImV4cCI6MjAwMjkzMjk5N30.hPS22Wlb6jhg3zRCDWfMBz3fW2bLXAvvyjxH0TPyajY"
+    key = "sb_publishable_pmWX5FiLCQjop9LrBk5hhw_CZCKbsah"
     headers = {
     'apikey': key,
     'Authorization': f'Bearer {key}',
     'Range': '0-9'}
 
-    response = requests.get('https://esvnfhwlfcrkpdwgvklt.supabase.co/rest/v1/books?status=eq.Reading&select=*', headers=headers,verify=False)
+    response = requests.get('https://qtydevnghftbunqvpyyo.supabase.co/rest/v1/books_read?status=eq.Reading&select=*', headers=headers,verify=False)
+    
+
     return (response.json())
 
-def UpdateCurrentReading():
-    key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdm5maHdsZmNya3Bkd2d2a2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODczNTY5OTcsImV4cCI6MjAwMjkzMjk5N30.hPS22Wlb6jhg3zRCDWfMBz3fW2bLXAvvyjxH0TPyajY"
-    headers = {
-    'apikey': key,
-    'Authorization': f'Bearer {key}',
-    'Content-Type': 'application/json',
-    'Prefer': 'return=minimal'}
-
-    params = {
-    'status': 'eq.Reading'}
-
-    json_data = {
-        'pages_completed': (int(st.session_state.readpages)),
-        'total_pages': int(st.session_state.totalpages),
-        'book_name': st.session_state.bookname,
-        'Author': st.session_state.author
-    }
-    response = requests.patch('https://esvnfhwlfcrkpdwgvklt.supabase.co/rest/v1/books', params=params, headers=headers, json=json_data,verify=False)
- 
-    if response.status_code == 204:
-        st.success('Updated!',icon="🎈")
 
 def MarkRead():
-    key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdm5maHdsZmNya3Bkd2d2a2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODczNTY5OTcsImV4cCI6MjAwMjkzMjk5N30.hPS22Wlb6jhg3zRCDWfMBz3fW2bLXAvvyjxH0TPyajY"
+    key = "sb_publishable_pmWX5FiLCQjop9LrBk5hhw_CZCKbsah"
     headers = {
     'apikey': key,
     'Authorization': f'Bearer {key}',
@@ -77,7 +59,7 @@ def MarkRead():
 
     
 
-    response = requests.patch('https://esvnfhwlfcrkpdwgvklt.supabase.co/rest/v1/books', params=params, headers=headers, json=json_data,verify=False)
+    response = requests.patch('https://qtydevnghftbunqvpyyo.supabase.co/rest/v1/books_read', params=params, headers=headers, json=json_data,verify=False)
  
     if response.status_code == 204:
         st.success('Marked as Read!',icon="🎈")
@@ -85,11 +67,12 @@ def MarkRead():
 st.set_page_config(page_title="Bookshelf",page_icon="📔")
 
 if 'querybooks' in st.session_state:
+    
     img_id = st.session_state.querybooks.split(',')[1].strip().split('-')[0].strip()
     title = st.session_state.querybooks.split('by')[0].strip()
     author = st.session_state.querybooks.split('by')[1].split(',')[0].strip()
-    total_pages = st.session_state.querybooks.split(',')[1].strip().split('-')[1].strip()
-    st.session_state.selectedbook = [title,author,img_id,total_pages]
+    st.session_state.selectedbook = [title,author,img_id]
+    
     st.button(label="Add " + st.session_state.querybooks,type="primary",on_click=AddToSupabase)
 
 
@@ -111,8 +94,9 @@ with tab1:
             
             books = []
             for book in st.session_state['book_data']:
+       
                 try:
-                    books.append(f"{book['title']} by {book['author_name'][0]} , {book['cover_edition_key']} - {book['number_of_pages_median']}")
+                    books.append(f"{book['title']} by {book['author_name'][0]} , {book['cover_edition_key']}")
                 except:
                     pass
             query_books = st.radio('Select a book to add',
@@ -128,18 +112,10 @@ with tab2:
 
         with st.form("search_form"):
         
-            st.markdown(f"### You are currently reading ***{data['book_name']}*** by ***{data['Author']}***")
-            st.text_input('Name of the book',value = data['book_name'],key="bookname")
-            st.text_input('Author',value = data['Author'],key="author")
-            st.number_input('You have read',value = data['pages_completed'],key="readpages")
-            st.number_input('Total Pages',value = data['total_pages'],key="totalpages")
-            
-            col1,col2 = st.columns([1,1])
-            with col1:
-                submitted = st.form_submit_button("Submit",on_click=UpdateCurrentReading,type='primary')                
-            with col2:
-                read = st.form_submit_button('Mark as Read',on_click=MarkRead)
-
+            st.markdown(f"### You are currently reading ***{data['name']}*** by ***{data['author']}***")
+            st.text_input('Name of the book',value = data['name'],key="bookname")
+            st.text_input('Author',value = data['author'],key="author")
+            read = st.form_submit_button('Mark as Read',on_click=MarkRead)
                 
     except:
         st.write("There is no book that you are currently reading.")
